@@ -409,14 +409,7 @@ class API
     public function marketQuoteSell(string $symbol, $quantity, array $flags = [])
     {
         $flags['isQuoteOrder'] = true;
-        $exchangeInfo = $this->exchangeInfo();
-        $filters = $exchangeInfo['symbols'][$symbol]['filters'];
-        $lotSize = array_filter($filters, function ($filter) {
-            return $filter['filterType'] === 'LOT_SIZE';
-        });
-        $lotSize = array_shift($lotSize);
-        $minQty = $lotSize['minQty'];
-        $c = $this->numberOfDecimals($minQty);
+        $c = $this->numberOfDecimals($this->exchangeInfo()['symbols'][$symbol]['filters'][1]['minQty']);
         $quantity = $this->floorDecimal($quantity, $c);
 
         return $this->order("SELL", $symbol, $quantity, 0, "MARKET", $flags);
@@ -452,14 +445,7 @@ class API
      */
     public function marketSell(string $symbol, $quantity, array $flags = [])
     {
-        $exchangeInfo = $this->exchangeInfo();
-        $filters = $exchangeInfo['symbols'][$symbol]['filters'];
-        $lotSize = array_filter($filters, function ($filter) {
-            return $filter['filterType'] === 'LOT_SIZE';
-        });
-        $lotSize = array_shift($lotSize);
-        $minQty = $lotSize['minQty'];
-        $c = $this->numberOfDecimals($minQty);
+        $c = $this->numberOfDecimals($this->exchangeInfo()['symbols'][$symbol]['filters'][1]['minQty']);
         $quantity = $this->floorDecimal($quantity, $c);
 
         return $this->order("SELL", $symbol, $quantity, 0, "MARKET", $flags);
